@@ -7,23 +7,22 @@ public class Arboles {
         String fraseLimpia = frase.trim().toLowerCase();
         String[] palabras = fraseLimpia.split(" ");
 
-        if (palabras.length != 3) {
-            return false;
-        }
+       if (palabras.length <3 && palabras.length > 3) {
+           return false;
+       }
+        boolean palabra1=  palabra1(palabras[0]);
+        boolean palabra2 = palabra2(palabras[1]);
+        boolean palabra3 = palabra3(palabras[2]);
 
-        boolean pronombreValido = validarPronombre(palabras[0]);
-        boolean verboValido = validarVerbo(palabras[1]);
-        boolean adjetivoValido = validarAdjetivo(palabras[2]);
-
-        return pronombreValido && verboValido && adjetivoValido;
+        return palabra1 && palabra2 && palabra3;
     }
 
-    private static boolean validarPronombre(String palabra) {
+    private static boolean palabra1(String palabra) {
         return esYo(palabra) || esTu(palabra) || esEl(palabra) ||
                 esNosotros(palabra) || esUstedes(palabra) || esAmable(palabra);
     }
 
-    private static boolean validarVerbo(String palabra) {
+    private static boolean palabra2(String palabra) {
         // Verbos SER y ESTAR
         return esTenemos(palabra) || esEl(palabra) || esSomos(palabra) ||
 
@@ -32,7 +31,7 @@ public class Arboles {
 
     }
 
-    private static boolean validarAdjetivo(String palabra) {
+    private static boolean palabra3(String palabra) {
         // Altura/Tamaño
         return  esPequenos(palabra)  ||
           esGrandes(palabra) || esEl(palabra) ||
@@ -596,3 +595,4 @@ public class Arboles {
         return e == 7 || e == 8 || e == 9;
     }
 }
+

@@ -62,7 +62,8 @@ public class Arboles {
         return e == 2;
     }
 
-    private static boolean esEl(String p) {
+
+   private static boolean esEl(String p) {
 
         int e = 0;
         for (char l : p.toCharArray()) {

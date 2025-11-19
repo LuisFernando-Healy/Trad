@@ -2,46 +2,39 @@
 
 public class Arboles {
 
+    // TODO Luper tiene que cambiale el nombre de las variables y a los metodos por que si te das cuenta hay palabras dentro
+    //de la funcion Palabras que se repiten asi que corrije eso 
+    //apura TODO LUPE
     public static boolean validarFrase(String frase) {
 
         String fraseLimpia = frase.trim().toLowerCase();
         String[] palabras = fraseLimpia.split(" ");
-
-       if (palabras.length <3 && palabras.length > 3) {
-           return false;
-       }
-        boolean palabra1=  palabra1(palabras[0]);
-        boolean palabra2 = palabra2(palabras[1]);
-        boolean palabra3 = palabra3(palabras[2]);
+ 
+        if (palabras.length != 3) {
+            return false;
+        }
+        boolean palabra1 = palabras(palabras[0]);
+        boolean palabra2 = palabras(palabras[1]);
+        boolean palabra3 = palabras(palabras[2]);
 
         return palabra1 && palabra2 && palabra3;
     }
 
-    private static boolean palabra1(String palabra) {
+    private static boolean palabras(String palabra) {
         return esYo(palabra) || esTu(palabra) || esEl(palabra) ||
-                esNosotros(palabra) || esUstedes(palabra) || esAmable(palabra);
-    }
-
-    private static boolean palabra2(String palabra) {
-        // Verbos SER y ESTAR
-        return esTenemos(palabra) || esEl(palabra) || esSomos(palabra) ||
-
-                esComo(palabra) || esVivo(palabra) || esVives(palabra) || esVive(palabra) || esVivimos(palabra)
-                || esViven(palabra) || esAmable(palabra) || esHermoso(palabra);
-
-    }
-
-    private static boolean palabra3(String palabra) {
-        // Altura/Tamaño
-        return  esPequenos(palabra)  ||
-          esGrandes(palabra) || esEl(palabra) ||
-
-               esFelices(palabra) || esTristes(palabra) ||
-
+                esNosotros(palabra) || esUstedes(palabra) || esAmable(palabra) ||
+                esTenemos(palabra) || esEl(palabra) || esSomos(palabra) ||
+                esComo(palabra) || esVivo(palabra) || esVives(palabra) || esVive(palabra) || 
+                esVivimos(palabra) || esViven(palabra) || esAmable(palabra) || esHermoso(palabra) 
+                ||esPequenos(palabra) || esGrandes(palabra) || esEl(palabra) ||
+                esFelices(palabra) || esTristes(palabra) ||
                 esRapidos(palabra) || esEl(palabra) ||
-
                 esInteligentes(palabra) || esHermoso(palabra) || esAmable(palabra);
     }
+
+  
+
+  
 
     private static boolean esYo(String p) {
         int e = 0;
@@ -358,9 +351,7 @@ public class Arboles {
     // --- Autómatas para Adjetivos --- [cite: 55, 56]
 
     // PEQUEÑO
-   
 
-    
     private static boolean esPequenos(String p) {
         int e = 0;
         for (char l : p.toCharArray()) {
@@ -380,7 +371,7 @@ public class Arboles {
                 e = 7;
             else if (e == 6 && l == 'a')
                 e = 8;
-            else if(e == 8 || e == 7 && l == 's'){
+            else if (e == 8 || e == 7 && l == 's') {
                 e = 9;
             } else
                 return false;
@@ -388,10 +379,7 @@ public class Arboles {
         return e == 8 || e == 7 || e == 9;
     }
 
-   
-
     // GRANDE
-   
 
     private static boolean esGrandes(String p) {
         int e = 0;
@@ -413,11 +401,10 @@ public class Arboles {
             else
                 return false;
         }
-        return e == 7  || e == 6;
+        return e == 7 || e == 6;
     }
 
     // FELIZ
-  
 
     private static boolean esFelices(String p) {
         int e = 0;
@@ -440,14 +427,12 @@ public class Arboles {
                 e = 8;
             else
                 return false;
-            } 
-                
-        
-        return e == 7  || e == 8;
+        }
+
+        return e == 7 || e == 8;
     }
 
     // TRISTE
-  
 
     private static boolean esTristes(String p) {
         int e = 0;
@@ -473,7 +458,7 @@ public class Arboles {
     }
 
     // RÁPIDO
-    
+
     private static boolean esRapidos(String p) {
         int e = 0;
         for (char l : p.toCharArray()) {
@@ -491,14 +476,13 @@ public class Arboles {
                 e = 6;
             else if (e == 5 && l == 'a')
                 e = 7;
-            else if (e == 7|| e == 6 && l == 's')
-                 e = 8;
+            else if (e == 7 || e == 6 && l == 's')
+                e = 8;
             else
                 return false;
         }
-        return e == 7|| e == 6 || e == 8;
+        return e == 7 || e == 6 || e == 8;
     }
-
 
     // INTELIGENTE
 
@@ -595,4 +579,3 @@ public class Arboles {
         return e == 7 || e == 8 || e == 9;
     }
 }
-

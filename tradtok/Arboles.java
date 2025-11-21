@@ -14,6 +14,7 @@ public class Arboles {
                esPalabraValida(tokens[2]);
     }
 
+    
     // Método central que distribuye según la letra inicial
     private static boolean esPalabraValida(String palabra) {
         if (palabra == null || palabra.isEmpty()) return false;

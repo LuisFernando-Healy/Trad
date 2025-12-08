@@ -10,12 +10,11 @@ public class PalabrasApp extends JFrame {
     private JButton botonAnalizar;
     private JButton botonLimpiar;
     private JTextArea areaLista;
-   
+
     private AnalisisLexico Analizador;
 
     public PalabrasApp() {
 
-       
         Analizador = new AnalisisLexico();
 
         setTitle("Traductor");
@@ -64,14 +63,25 @@ public class PalabrasApp extends JFrame {
                 }
 
                 try {
-                    
+
                     // analisis lexico
                     ArrayList<Token> tokens = Analizador.analizar(fraseCompleta.trim());
 
                     // arboles - analisis sintactico
                     boolean esSintaxisValida = Arboles.validarFrase(fraseCompleta.trim().toLowerCase());
 
-                    mostrarResultados(fraseCompleta.trim(), tokens, esSintaxisValida);
+                    // analisis semantico
+                    boolean SemanticaValdia =false;
+
+                    if (esSintaxisValida) {
+                        SemanticaValdia = Semantica.AnalisarSemantica(fraseCompleta.trim().toLowerCase());
+                    }
+
+                  
+    
+   
+
+                    mostrarResultados(fraseCompleta.trim(), tokens, esSintaxisValida, SemanticaValdia);
 
                 } catch (Exception ex) {
 
@@ -85,8 +95,7 @@ public class PalabrasApp extends JFrame {
         });
     }
 
-
-    private void mostrarResultados(String frase, ArrayList<Token> tokens, boolean esSintaxisValida) {
+    private void mostrarResultados(String frase, ArrayList<Token> tokens, boolean esSintaxisValida, boolean esSemanticaValida) {
 
         // Prepara la salida de tokens
         StringBuilder tokenSalida = new StringBuilder();
@@ -98,12 +107,29 @@ public class PalabrasApp extends JFrame {
 
         // Resultado del Análisis Sintáctico
         if (esSintaxisValida) {
-            areaLista.append("2.Analisis Sintactico FRASE VÁLIDA\n\n");
+            areaLista.append("2.Analisis Sintactico FRASE VÁLIDA\n");
             areaLista.append(" ");
         } else {
             areaLista.append("2.Analisis Sintactico  FRASE NO VÁLIDA\n\n");
             areaLista.append(" ");
         }
+        
+
+         
+
+        if(esSintaxisValida){
+            if(esSemanticaValida){
+                areaLista.append("3.Analisis semantico: correcto \n\n");
+            } else 
+                {
+                    areaLista.append("3.Analisis semantico: frase incoherente \n\n");
+            }  
+            
+            
+        }
+        
+        
+
         
     }
 
@@ -112,6 +138,5 @@ public class PalabrasApp extends JFrame {
             new PalabrasApp().setVisible(true);
         });
     }
-    
-   
+
 }

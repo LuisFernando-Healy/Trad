@@ -2,10 +2,51 @@
 
 public class Arboles {
 
-    // TODO Luper tiene que cambiale el nombre de las variables y a los metodos por que si te das cuenta hay palabras dentro
-    //de la funcion Palabras que se repiten asi que corrije eso 
-    //apura TODO LUPE
-    public static boolean validarFrase(String frase) {
+
+
+        public enum categoria {
+            PRONOMBRE, VERBO, ADJETIVO, DESCONOCIDA
+
+        }
+
+
+        public static categoria getcategoria(String palabra) {
+            String p = palabra.toLowerCase();
+            if (Pronombre(p)){
+                return categoria.PRONOMBRE;
+            }
+            else 
+            if (Verbo(p)) {
+                return categoria.VERBO;
+                
+            } else 
+            if(Adjetivo(p)){
+                return categoria.ADJETIVO;
+            }
+            else return categoria.DESCONOCIDA;
+        }
+
+        public static boolean Pronombre(String palabra){
+            return esYo(palabra)|| esEl(palabra)||esTu(palabra)||esUstedes(palabra)||esNosotros(palabra);
+
+        }
+
+        public static boolean Verbo(String palabra){
+            return El(palabra)|| esSomos(palabra)||esTenemos(palabra)||esComo(palabra)|| esVive(palabra)||esVivo(palabra);
+        
+        }
+
+
+        public static boolean Adjetivo(String palabra){
+            return amable(palabra)||esHermoso(palabra)
+            ||esPequenos(palabra)|| esGrandes(palabra)
+            || esFelices(palabra)||esRapidos(palabra);
+        }
+
+
+
+
+        public static boolean validarFrase(String frase) {
 
         String fraseLimpia = frase.trim().toLowerCase();
         String[] palabras = fraseLimpia.split(" ");
@@ -22,14 +63,14 @@ public class Arboles {
 
     private static boolean palabras(String palabra) {
         return esYo(palabra) || esTu(palabra) || esEl(palabra) ||
-                esNosotros(palabra) || esUstedes(palabra) || esAmable(palabra) ||
-                esTenemos(palabra) || esEl(palabra) || esSomos(palabra) ||
+                esNosotros(palabra) || esUstedes(palabra) || amable(palabra) ||
+                esTenemos(palabra) ||  esSomos(palabra) ||
                 esComo(palabra) || esVivo(palabra) || esVives(palabra) || esVive(palabra) || 
-                esVivimos(palabra) || esViven(palabra) || esAmable(palabra) || esHermoso(palabra) 
-                ||esPequenos(palabra) || esGrandes(palabra) || esEl(palabra) ||
+                esVivimos(palabra) || esViven(palabra) || esHermoso(palabra) 
+                ||esPequenos(palabra) || esGrandes(palabra) || 
                 esFelices(palabra) || esTristes(palabra) ||
-                esRapidos(palabra) || esEl(palabra) ||
-                esInteligentes(palabra) || esHermoso(palabra) || esAmable(palabra);
+                esRapidos(palabra)  || El(palabra) ||
+                esInteligentes(palabra) || esHermoso(palabra) ;
     }
 
   
@@ -66,40 +107,53 @@ public class Arboles {
    private static boolean esEl(String p) {
 
         int e = 0;
-        for (char l : p.toCharArray()) {
-            if (e == 0 && l == 'e' || e == 0 && l == 'é')
-                e = 1;
-            else if (e == 1 && l == 'l')
-                e = 2;
-            else if (e == 2 && l == 'l') {
-                e = 3;
-            } else if (e == 3 && l == 'a') {
-                e = 4;
-            } else if (e == 4 && l == 'o') {
-                e = 5;
-            } else if (e == 4 || e == 5 || e == 1 || e == 12 && l == 's') {
-                e = 6;
-            } else if (e == 6 && l == 't') {
-                e = 7;
-            } else if (e == 7 && l == 'a') {
-                e = 8;
-            } else if (e == 8 && l == 'n') {
-                e = 9;
-            } else if (e == 8 && l == 'r') {
-                e = 10;
-            } else if (e == 8 && l == 's') {
-                e = 11;
-            } else if (e == 7 || e == 14 && l == 'o') {
-                e = 12;
-            } else if (e == 12 && l == 'y') {
-                e = 13;
-            } else if (e == 8 && l == 'm') {
-                e = 14;
-            } else
-                return false;
-        }
-        return e == 2 || e == 4 || e == 8 || e == 9 || e == 10 || e == 11 || e == 13 || e == 6;
+    for (char l : p.toCharArray()) {
+        if (e == 0 && (l == 'e' || l == 'é')) e = 1;
+        
+        
+        else if (e == 1 && l == 'l') e = 2; 
+        else if (e == 2 && l == 'l') e = 3;
+        else if (e == 3 && l == 'a') e = 4; 
+        else if (e == 3 && l == 'o') e = 5; 
+        else if ((e == 4 || e == 5) && l == 's') e = 6; 
+        
+        else return false;
     }
+    return e == 2 || e == 4 || e == 6;
+    }
+
+
+//para verbo
+
+private static boolean El(String p) {
+
+       int e = 0;
+    for (char l : p.toCharArray()) {
+        if (e == 0 && (l == 'e' || l == 'é')) e = 1;
+        else if (e == 1 && l == 'r') e = 20;
+        else if (e == 20 && l == 'e') e = 21;
+        else if (e == 21 && l == 's') e = 22; 
+        else if (e == 1 && l == 's') e = 2; 
+        else if (e == 2 && l == 't') e = 3;
+        else if (e == 3 && l == 'a') e = 4; 
+        else if (e == 4 && l == 's') e = 5; 
+        else if (e == 4 && l == 'n') e = 6;
+        else if (e == 3 && l == 'o') e = 7;
+        else if (e == 7 && l == 'y') e = 8; 
+        else if (e == 4 && l == 'm') e = 10; 
+        else if (e == 10 && l == 'o') e = 11;
+        else if (e == 11 && l == 's') e = 12; 
+
+        else return false; 
+    }
+    return e == 2 || e == 22 || e == 5 || e == 6 || e == 8 || e == 12 || e == 4;
+    }
+
+
+
+
+
+
 
     private static boolean esNosotros(String p) {
         int e = 0;
@@ -521,7 +575,7 @@ public class Arboles {
     }
 
     // AMABLE
-    private static boolean esAmable(String p) {
+    private static boolean amable(String p) {
         int e = 0;
         for (char l : p.toCharArray()) {
             if (e == 0 && l == 'a')
@@ -532,7 +586,7 @@ public class Arboles {
                 e = 3;
             else if (e == 3 && l == 'b')
                 e = 4;
-            else if (e == 1 || e == 4 && l == 'l')
+            else if ((e == 1 || e == 4) && l == 'l')
                 e = 5;
             else if (e == 5 && l == 'e')
                 e = 6;
@@ -544,7 +598,7 @@ public class Arboles {
                 e = 9;
             } else if (e == 8 && l == 'a') {
                 e = 10;
-            } else if (e == 9 || e == 10 && l == 's') {
+            } else if ((e == 9 || e == 10) && l == 's') {
                 e = 11;
             } else
                 return false;

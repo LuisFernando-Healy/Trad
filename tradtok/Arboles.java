@@ -4,7 +4,7 @@ public class Arboles {
         if (frase == null || frase.trim().isEmpty()) return false;
 
         String fraseLimpia = frase.trim().toLowerCase();
-        String[] tokens = fraseLimpia.split(" ");
+        String[] tokens = fraseLimpia.split("\\s+");
 
         if (tokens.length != 3) return false;
 
@@ -14,8 +14,6 @@ public class Arboles {
                esPalabraValida(tokens[2]);
     }
 
-    
-    // Método central que distribuye según la letra inicial
     private static boolean esPalabraValida(String palabra) {
         if (palabra == null || palabra.isEmpty()) return false;
         
@@ -40,10 +38,10 @@ public class Arboles {
         
         return false;
     }
-    //* GRAFOS POR LETRA INICIAL
-    
 
-    // Palabras con A: Amable, Amables, Alto, Altos...
+    // --- GRAFOS ---
+
+    // Palabras con A: Amable, Amables, Alto, Altos, Alta, Altas...
     private static boolean esPalabraConA(String p) {
         int e = 0;
         for (char l : p.toCharArray()) {
@@ -52,13 +50,14 @@ public class Arboles {
             else if (e == 2 && l == 'a') e = 3;
             else if (e == 3 && l == 'b') e = 4;
             else if ((e == 1 || e == 4) && l == 'l') e = 5; // Cruce: A-l(to) o Amab-l(e)
-            else if (e == 5 && l == 'e') e = 6;
-            else if (e == 6 && l == 's') e = 7;
-            // Rama de "Alto" (venía en tu código original dentro de esAmable)
+            else if (e == 5 && l == 'e') e = 6;  // Final: Amable
+            else if (e == 6 && l == 's') e = 7;  // Final: Amables
+            
+            // Rama de "Alto/a/os/as"
             else if (e == 5 && l == 't') e = 8;
-            else if (e == 8 && l == 'o') e = 9;
-            else if (e == 8 && l == 'a') e = 10;
-            else if ((e == 9 || e == 10) && l == 's') e = 11;
+            else if (e == 8 && l == 'o') e = 9;  // Final: Alto
+            else if (e == 8 && l == 'a') e = 10; // Final: Alta
+            else if ((e == 9 || e == 10) && l == 's') e = 11; // Final: Altos/Altas
             else return false;
         }
         return e == 6 || e == 7 || e == 9 || e == 10 || e == 0 || e == 11;
@@ -83,27 +82,35 @@ public class Arboles {
         return e == 4 || e == 6 || e == 5 || e == 9 || e == 10;
     }
 
-    // Palabras con E: El, Ella, Eres, Estoy, Es...
+    // Palabras con E: El, Ella, Ellos, Ellas, Eres, Estoy, Es...
     private static boolean esPalabraConE(String p) {
         int e = 0;
         for (char l : p.toCharArray()) {
             if ((e == 0 && l == 'e') || (e == 0 && l == 'é')) e = 1;
-            else if (e == 1 && l == 'l') e = 2;
-            else if (e == 2 && l == 'l') e = 3;
-            else if (e == 3 && l == 'a') e = 4;
-            else if (e == 4 && l == 'o') e = 5;
-            else if ((e == 4 || e == 5 || e == 1 || e == 12) && l == 's') e = 6;
+            
+            // Rama "El", "Ella", "Ellos", "Ellas"
+            else if (e == 1 && l == 'l') e = 2; // Final: El
+            else if (e == 2 && l == 'l') e = 3; 
+            else if (e == 3 && l == 'a') e = 4; // Final: Ella
+            else if (e == 4 && l == 's') e = 15; // Final: Ellas (NUEVO)
+            else if (e == 3 && l == 'o') e = 16; 
+            else if (e == 16 && l == 's') e = 17; // Final: Ellos (NUEVO)
+
+            // Rama "Es", "Estoy"...
+            else if ((e == 4 || e == 5 || e == 1 || e == 12) && l == 's') e = 6; // Final: Es
             else if (e == 6 && l == 't') e = 7;
-            else if (e == 7 && l == 'a') e = 8;
-            else if (e == 8 && l == 'n') e = 9;
-            else if (e == 8 && l == 'r') e = 10;
-            else if (e == 8 && l == 's') e = 11;
-            else if ((e == 7 || e == 14) && l == 'o') e = 12;
-            else if (e == 12 && l == 'y') e = 13;
-            else if (e == 8 && l == 'm') e = 14;
+            else if (e == 7 && l == 'a') e = 8; // "Esta..."
+            else if (e == 8 && l == 'n') e = 9; // Final: Estan
+            else if (e == 8 && l == 'r') e = 10; // "Estar"
+            else if (e == 8 && l == 's') e = 11; // Final: Estas
+            else if ((e == 7 || e == 14) && l == 'o') e = 12; // "Esto..."
+            else if (e == 12 && l == 'y') e = 13; // Final: Estoy
+            else if (e == 8 && l == 'm') e = 14; // "Estam..."
+            
             else return false;
         }
-        return e == 2 || e == 4 || e == 8 || e == 9 || e == 10 || e == 11 || e == 13 || e == 6;
+        // Agregados estados 15 (Ellas) y 17 (Ellos)
+        return e == 2 || e == 4 || e == 8 || e == 9 || e == 10 || e == 11 || e == 13 || e == 6 || e == 15 || e == 17;
     }
 
     // Palabras con F: Feliz, Felices
@@ -139,7 +146,7 @@ public class Arboles {
         return e == 7 || e == 6;
     }
 
-    // Palabras con H: Hermoso, Hermosa...
+    // Palabras con H: Hermoso, Hermosa, Hermosos, Hermosas
     private static boolean esPalabraConH(String p) {
         int e = 0;
         for (char l : p.toCharArray()) {
@@ -148,10 +155,13 @@ public class Arboles {
             else if (e == 2 && l == 'r') e = 3;
             else if (e == 3 && l == 'm') e = 4;
             else if (e == 4 && l == 'o') e = 5;
-            else if (e == 5 && l == 's') e = 6;
+            else if (e == 5 && l == 's') e = 6; // Raíz "Hermos"
+            
             else if (e == 6 && l == 'o') e = 7; // Final: Hermoso
             else if (e == 6 && l == 'a') e = 8; // Final: Hermosa
-            else if ((e == 7 || e == 8) && l == 's') e = 9; // Final: Hermosos/as
+            
+            // Plurales (Hermosos / Hermosas)
+            else if ((e == 7 || e == 8) && l == 's') e = 9; 
             else return false;
         }
         return e == 7 || e == 8 || e == 9;
@@ -183,17 +193,18 @@ public class Arboles {
         int e = 0;
         for (char l : p.toCharArray()) {
             if (e == 0 && l == 'n') e = 1;
-            else if (e == 1 && l == 'o') e = 2;
-            else if (e == 2 && l == 's') e = 3;
+            else if (e == 1 && l == 'o') e = 2; // Final: No
+            else if (e == 2 && l == 's') e = 3; // Final: Nos
             else if (e == 3 && l == 'o') e = 4;
             else if (e == 4 && l == 't') e = 5;
             else if (e == 5 && l == 'r') e = 6;
             else if (e == 6 && l == 'o') e = 7;
             else if (e == 6 && l == 'a') e = 8;
-            else if ((e == 8 || e == 7) && l == 's') e = 9;
+            else if ((e == 8 || e == 7) && l == 's') e = 9; // Nosotros/as
             else return false;
         }
-        return e == 9;
+        // Agregamos e==2 (No) y e==3 (Nos)
+        return e == 2 || e == 3 || e == 9;
     }
 
     // Palabras con P: Pequeño, Pequeños...
@@ -248,7 +259,6 @@ public class Arboles {
     }
 
     // Palabras con T: Tu, Tenemos, Triste, Tiene...
-    // UNIFICACION: Tu, Tenemos... y Tristes
     private static boolean esPalabraConT(String p) {
         int e = 0;
         for (char l : p.toCharArray()) {
@@ -258,7 +268,7 @@ public class Arboles {
             else if (e == 1 && l == 'u') e = 17; // Final: Tu
             else if (e == 1 && l == 'e') e = 2;  // Camino: Tenemos/Tengo
             else if (e == 1 && l == 'i') e = 8;  // Camino: Tiene...
-            else if (e == 1 && l == 'r') e = 18; // Camino: Triste (Nuevo)
+            else if (e == 1 && l == 'r') e = 18; // Camino: Triste
 
             // Rama Tenemos / Tengo
             else if (e == 2 && l == 'n') e = 3;
@@ -270,7 +280,7 @@ public class Arboles {
             // Rama Tengo
             else if (e == 3 && l == 'g') e = 14;
             else if (e == 14 && l == 'o') e = 15; // Final: Tengo
-            else if (e == 15 && l == 'u') e = 16; // Final: Tengou
+            else if (e == 15 && l == 'u') e = 16; // Final: Tengou (?)
             
             // Rama Tiene/s/n
             else if (e == 8 && l == 'e') e = 9;
@@ -279,7 +289,7 @@ public class Arboles {
             else if (e == 11 && l == 's') e = 12; // Final: Tienes
             else if (e == 11 && l == 'n') e = 13; // Final: Tienen
 
-            // Rama Triste (Añadida aquí para completar el grafo T)
+            // Rama Triste
             else if (e == 18 && l == 'i') e = 19;
             else if (e == 19 && l == 's') e = 20;
             else if (e == 20 && l == 't') e = 21;
@@ -308,7 +318,6 @@ public class Arboles {
     }
 
     // Palabras con V: Vivo, Vives, Vive, Vivimos, Viven...
-    // UNIFICACION: Todas las de "Vivir"
     private static boolean esPalabraConV(String p) {
         int e = 0;
         for (char l : p.toCharArray()) {

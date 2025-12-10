@@ -97,7 +97,7 @@ public class PalabrasApp extends JFrame {
 
     private void mostrarResultados(String frase, ArrayList<Token> tokens, boolean esSintaxisValida, boolean esSemanticaValida) {
 
-        // Prepara la salida de tokens
+    
         StringBuilder tokenSalida = new StringBuilder();
         for (Token token : tokens) {
             tokenSalida.append(token.toString()).append("");

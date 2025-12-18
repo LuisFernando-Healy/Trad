@@ -1,4 +1,3 @@
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -10,108 +9,104 @@ public class PalabrasApp extends JFrame {
     private JButton botonAnalizar;
     private JButton botonLimpiar;
     private JTextArea areaLista;
-   
-    private AnalisisLexico Analizador;
+    
+    private AnalisisLexico analizadorLexico;
 
     public PalabrasApp() {
+        // Inicializamos el analizador léxico
+        analizadorLexico = new AnalisisLexico();
 
-       
-        Analizador = new AnalisisLexico();
-
-        setTitle("Traductor");
-        setSize(550, 400);
+        setTitle("Analizador de Lenguaje - Árboles Semánticos");
+        setSize(600, 450);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // panel y botones
+        // Panel superior para entrada de datos
         JPanel panelSuperior = new JPanel();
+        panelSuperior.setBackground(new Color(240, 240, 240));
         campoTexto = new JTextField(20);
         botonAnalizar = new JButton("Analizar Frase");
         botonLimpiar = new JButton("Limpiar");
 
-        panelSuperior.add(new JLabel("Ingrese una frase:"));
+        panelSuperior.add(new JLabel("Ingrese una frase (3 palabras):"));
         panelSuperior.add(campoTexto);
         panelSuperior.add(botonAnalizar);
         panelSuperior.add(botonLimpiar);
 
+        // Área de resultados con Scroll
         areaLista = new JTextArea();
         areaLista.setEditable(false);
+        areaLista.setFont(new Font("Monospaced", Font.PLAIN, 13));
+        areaLista.setMargin(new Insets(10, 10, 10, 10));
         JScrollPane scroll = new JScrollPane(areaLista);
 
         add(panelSuperior, BorderLayout.NORTH);
         add(scroll, BorderLayout.CENTER);
 
-        // boton limpiar
-        botonLimpiar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                campoTexto.setText("");
-                areaLista.setText("");
-            }
+        // --- EVENTO BOTÓN LIMPIAR ---
+        botonLimpiar.addActionListener(e -> {
+            campoTexto.setText("");
+            areaLista.setText("");
         });
 
-        // boton analizar
+        // --- EVENTO BOTÓN ANALIZAR ---
         botonAnalizar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                // 1. Obtenemos la frase del campo de texto
-                String fraseCompleta = campoTexto.getText();
+                String fraseCompleta = campoTexto.getText().trim();
 
                 if (fraseCompleta.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "El campo no debe estar vacio");
+                    JOptionPane.showMessageDialog(null, "El campo no debe estar vacío");
                     return;
                 }
 
                 try {
+                    areaLista.append("==========================================\n");
+                    areaLista.append("ANALIZANDO: \"" + fraseCompleta + "\"\n");
+                    areaLista.append("==========================================\n");
+
+                    // 1. ANÁLISIS LÉXICO (Caracteres válidos)
+                    ArrayList<Token> tokens = analizadorLexico.analizar(fraseCompleta);
                     
-                    // analisis lexico
-                    ArrayList<Token> tokens = Analizador.analizar(fraseCompleta.trim());
+                    // Prepara la salida de tokens visualmente
+                    StringBuilder tokenSalida = new StringBuilder();
+                    for (Token t : tokens) {
+                        tokenSalida.append("[").append(t.getCaracter()).append("] ");
+                    }
+                    areaLista.append("1. LÉXICO: Caracteres válidos.\n   Tokens: " + tokenSalida.toString() + "\n");
 
-                    // arboles - analisis sintactico
-                    boolean esSintaxisValida = Arboles.validarFrase(fraseCompleta.trim().toLowerCase());
+                    // 2. ANÁLISIS SINTÁCTICO (Grafos AFD en Arboles.java)
+                    // Verifica que las palabras existan y sean 3.
+                    boolean esSintaxisValida = Arboles.validarFrase(fraseCompleta);
+                    
+                    if (esSintaxisValida) {
+                        areaLista.append("2. SINTÁCTICO: Estructura de grafos correcta.\n");
+                        
+                        // 3. ANÁLISIS SEMÁNTICO (Árbol de Concordancia)
+                        // Aquí es donde se aplican las reglas de género y número.
+                        String resultadoSemantico = AnalisisSemantico.validarSemantica(fraseCompleta);
+                        areaLista.append("3. SEMÁNTICO (ÁRBOL): " + resultadoSemantico + "\n");
+                        
+                    } else {
+                        areaLista.append("2. SINTÁCTICO: ERROR. Frase no reconocida por los grafos.\n");
+                        areaLista.append("3. SEMÁNTICO: No se puede analizar sin sintaxis válida.\n");
+                    }
 
-                    mostrarResultados(fraseCompleta.trim(), tokens, esSintaxisValida);
+                    areaLista.append("\n");
 
                 } catch (Exception ex) {
-
                     JOptionPane.showMessageDialog(PalabrasApp.this, "Error Léxico: " + ex.getMessage());
-
-                    areaLista.append("--- ANÁLISIS FALLIDO ---\n");
-                    areaLista.append("FRASE: " + fraseCompleta + "\n");
-                    areaLista.append("ERROR LÉXICO: " + ex.getMessage() + "\n\n");
+                    areaLista.append("--- ERROR EN EL PROCESO ---\n");
+                    areaLista.append("MOTIVO: " + ex.getMessage() + "\n\n");
                 }
             }
         });
     }
 
-
-    private void mostrarResultados(String frase, ArrayList<Token> tokens, boolean esSintaxisValida) {
-
-        // Prepara la salida de tokens
-        StringBuilder tokenSalida = new StringBuilder();
-        for (Token token : tokens) {
-            tokenSalida.append(token.toString()).append("");
-        }
-
-        areaLista.append("1. ANÁLISIS LÉXICO  " + tokenSalida.toString() + "\n");
-
-        // Resultado del Análisis Sintáctico
-        if (esSintaxisValida) {
-            areaLista.append("2.Analisis Sintactico FRASE VÁLIDA\n\n");
-            areaLista.append(" ");
-        } else {
-            areaLista.append("2.Analisis Sintactico  FRASE NO VÁLIDA\n\n");
-            areaLista.append(" ");
-        }
-        
-    }
-
     public static void main(String[] args) {
+        // Ejecución de la interfaz
         SwingUtilities.invokeLater(() -> {
             new PalabrasApp().setVisible(true);
         });
     }
-    
-   
 }

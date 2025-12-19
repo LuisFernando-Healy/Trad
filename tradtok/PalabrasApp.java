@@ -10,7 +10,7 @@ public class PalabrasApp extends JFrame {
     private JLabel lblLexico, lblSintactico, lblSemantico, lblTraduccion;
     private AnalisisLexico analizadorLexico;
 
-    // Paleta de Colores UI Moderna
+
     Color bgFondo = new Color(245, 247, 250);
     Color azulAccent = new Color(52, 152, 219);
     Color verdeExito = new Color(46, 204, 113);
@@ -33,7 +33,7 @@ public class PalabrasApp extends JFrame {
     }
 
     private void initUI() {
-        // --- HEADER ---
+        
         JPanel header = new JPanel(new GridLayout(2, 1));
         header.setBackground(azulAccent);
         header.setBorder(new EmptyBorder(20, 20, 20, 20));
@@ -49,12 +49,12 @@ public class PalabrasApp extends JFrame {
         header.add(sub);
         add(header, BorderLayout.NORTH);
 
-        // --- CUERPO PRINCIPAL (UX) ---
+        
         JPanel cuerpo = new JPanel(new BorderLayout(10, 20));
         cuerpo.setOpaque(false);
         cuerpo.setBorder(new EmptyBorder(20, 40, 20, 40));
 
-        // Input Box
+       
         JPanel panelInput = new JPanel(new BorderLayout(15, 0));
         panelInput.setOpaque(false);
         
@@ -71,7 +71,7 @@ public class PalabrasApp extends JFrame {
         panelInput.add(botonAnalizar, BorderLayout.EAST);
         cuerpo.add(panelInput, BorderLayout.NORTH);
 
-        // Paneles de Estados (Cards)
+        
         panelPasos = new JPanel(new GridLayout(4, 1, 0, 15));
         panelPasos.setOpaque(false);
 
@@ -89,7 +89,7 @@ public class PalabrasApp extends JFrame {
         cuerpo.add(panelPasos, BorderLayout.CENTER);
         add(cuerpo, BorderLayout.CENTER);
 
-        // Eventos
+     
         botonAnalizar.addActionListener(e -> procesarFrase());
     }
 

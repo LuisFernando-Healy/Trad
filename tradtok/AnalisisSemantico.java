@@ -1,71 +1,79 @@
+import java.util.HashMap;
+
 public class AnalisisSemantico {
 
     public static String validarSemantica(String frase) {
         String[] palabras = frase.trim().toLowerCase().split("\\s+");
         
-        // El árbol debe tener exactamente 3 ramas en el orden correcto
         if (palabras.length != 3) {
-            return "ERROR: La estructura debe ser [Pronombre] [Verbo] [Adjetivo].";
+            return "ERROR: La estructura debe ser [Pronombre] [Verbo] [Adjetivo/Gerundio].";
         }
 
-        // 1. Extraer información validando la POSICIÓN (Jerarquía del Árbol)
-        Atributos p1 = extraerInfo(palabras[0]); // Rama 1: Sujeto
-        Atributos p2 = extraerInfo(palabras[1]); // Rama 2: Verbo
-        Atributos p3 = extraerInfo(palabras[2]); // Rama 3: Adjetivo
+        Atributos p1 = extraerInfo(palabras[0]); 
+        Atributos p2 = extraerInfo(palabras[1]); 
+        Atributos p3 = extraerInfo(palabras[2]); 
 
-        // 2. Validación de ORDEN (Si se altera el orden, el árbol es inválido)
-        if (p1 == null || !p1.tipo.equals("Pronombre")) {
-            return "ERROR DE ORDEN: La primera palabra debe ser un Pronombre.";
-        }
-        if (p2 == null || !p2.tipo.equals("Verbo")) {
-            return "ERROR DE ORDEN: La segunda palabra debe ser un Verbo.";
-        }
-        if (p3 == null || !p3.tipo.equals("Adjetivo")) {
-            return "ERROR DE ORDEN: La tercera palabra debe ser un Adjetivo.";
-        }
+        // 1. VALIDACIÓN DE ESTRUCTURA
+        if (p1 == null || !p1.tipo.equals("Pronombre")) return "ERROR: Falta Pronombre inicial.";
+        if (p2 == null || !p2.tipo.equals("Verbo")) return "ERROR: Falta Verbo en la posición 2.";
+        if (p3 == null) return "ERROR: Tercera palabra no reconocida.";
 
-        
-        // Regla: Sujeto y Verbo deben coincidir en Número
+        // 2. VALIDACIÓN DE CONCORDANCIA
         if (!p1.numero.equals(p2.numero)) {
             return "ERROR: El sujeto es " + p1.numero + " pero el verbo es " + p2.numero + ".";
         }
-        // Regla: Sujeto y Adjetivo deben coincidir en Número y Género
-        if (!p1.numero.equals(p3.numero)) {
-            return "ERROR: El adjetivo debe ser " + (p1.numero.equals("S") ? "Singular" : "Plural") + ".";
-        }
-        if (!p3.genero.equals("N") && !p1.genero.equals("N") && !p1.genero.equals(p3.genero)) {
-            return "ERROR: El género del adjetivo no coincide con el sujeto.";
+        if (p3.tipo.equals("Adjetivo")) {
+            if (!p1.numero.equals(p3.numero)) return "ERROR: El adjetivo no coincide en número.";
+            if (!p3.genero.equals("N") && !p1.genero.equals("N") && !p1.genero.equals(p3.genero)) {
+                return "ERROR: El adjetivo no coincide en género.";
+            }
         }
 
-        return "FRASE SEMÁNTICAMENTE CORRECTA";
+        // 3. TRADUCCIÓN (Si todo lo anterior es correcto)
+        String t1 = traducir(palabras[0]);
+        String t2 = traducir(palabras[1]);
+        String t3 = traducir(palabras[2]);
+
+        return "CORRECTO. Traducción: " + t1 + " " + t2 + " " + t3;
+    }
+
+    private static String traducir(String p) {
+        HashMap<String, String> dic = new HashMap<>();
+        // Pronombres
+        dic.put("yo", "io"); dic.put("él", "lui"); dic.put("el", "lui"); dic.put("ella", "lei");
+        dic.put("nosotros", "noi"); dic.put("nosotras", "noi"); dic.put("ellos", "loro"); 
+        dic.put("ellas", "loro"); dic.put("usted", "lei"); dic.put("ustedes", "voi"); dic.put("tu", "tu");
+        // Verbos
+        dic.put("soy", "sono"); dic.put("es", "è"); dic.put("está", "sta"); dic.put("estan", "stanno");
+        dic.put("están", "stanno"); dic.put("somos", "siamo"); dic.put("estamos", "stiamo"); 
+        dic.put("son", "sono"); dic.put("eres", "sei"); dic.put("como", "mangio");
+        dic.put("comen", "mangiano"); dic.put("comiendo", "mangiando");
+        // Adjetivos
+        dic.put("hermoso", "bellissimo"); dic.put("hermosa", "bellissima");
+        dic.put("hermosos", "bellissimi"); dic.put("hermosas", "bellissime");
+        dic.put("inteligente", "intelligente"); dic.put("felices", "felici");
+        dic.put("feliz", "felice"); dic.put("alto", "alto"); dic.put("alta", "alta");
+
+        return dic.getOrDefault(p, p);
     }
 
     private static Atributos extraerInfo(String p) {
-        // --- CATEGORÍA: PRONOMBRES ---
-        if (p.matches("yo|él|ella|usted|nosotros|nosotras|ellos|ellas|ustedes")) {
-            String num = p.matches("yo|él|ella|usted") ? "S" : "P";
-            String gen = p.matches("él|ellos") ? "M" : (p.matches("ella|ellas") ? "F" : "N");
+        if (p.matches("yo|él|el|ella|usted|nosotros|nosotras|ellos|ellas|ustedes|tu")) {
+            String num = p.matches("yo|él|el|ella|usted|tu") ? "S" : "P";
+            String gen = p.matches("él|el|ellos|nosotros") ? "M" : (p.matches("ella|ellas|nosotras") ? "F" : "N");
             return new Atributos(num, gen, "Pronombre");
         }
-        
-        // --- CATEGORÍA: VERBOS ---
-        if (p.matches("soy|es|está|estamos|son|están|eres|somos|vive|viven|vivimos|tengo|tiene|tienen|tenemos")) {
-            String num = p.matches("soy|es|está|eres|vive|tengo|tiene") ? "S" : "P";
+        if (p.matches("soy|es|está|estan|estamos|son|están|eres|somos|como|comen")) {
+            String num = p.matches("soy|es|está|eres|como") ? "S" : "P";
             return new Atributos(num, "N", "Verbo");
         }
-
-        // --- CATEGORÍA: ADJETIVOS (Incluyendo Hermoso, Inteligente, etc.) ---
-        // Inteligente, Grande, Triste, Feliz son Neutros ("N")
-        if (p.matches("inteligente|inteligentes|grande|grandes|triste|tristes|feliz|felices|amable|amables")) {
-            return new Atributos(p.endsWith("s") || p.equals("felices") ? "P" : "S", "N", "Adjetivo");
-        }
-        // Hermoso, Alto, Pequeño tienen Género (M/F)
-        if (p.matches("hermoso|hermosa|hermosos|hermosas|alto|alta|altos|altas|pequeño|pequeña|pequeños|pequeñas|rapido|rapida|rapidos|rapidas")) {
+        if (p.equals("comiendo")) return new Atributos("N", "N", "Verbo");
+        if (p.matches("inteligente|inteligentes|feliz|felices")) return new Atributos(p.endsWith("s") || p.equals("felices") ? "P" : "S", "N", "Adjetivo");
+        if (p.matches("hermoso|hermosa|hermosos|hermosas|alto|alta|altos|altas")) {
             String num = (p.endsWith("os") || p.endsWith("as")) ? "P" : "S";
             String gen = (p.endsWith("o") || p.endsWith("os")) ? "M" : "F";
             return new Atributos(num, gen, "Adjetivo");
         }
-        
         return null;
     }
 }
